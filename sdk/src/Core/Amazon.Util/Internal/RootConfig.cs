@@ -50,27 +50,9 @@ namespace Amazon.Util.Internal
             Region = AWSConfigs._awsRegion;
             ProfileName = AWSConfigs._awsProfileName;
             ProfilesLocation = AWSConfigs._awsAccountsLocation;
+            ApplicationName = "";
             UseSdkCache = AWSConfigs._useSdkCache;
             CorrectForClockSkew = true;
-
-#if !PCL && !CORECLR
-            var root = AWSConfigs.GetSection<AWSSection>(_rootAwsSectionName);
-
-            Logging.Configure(root.Logging);
-            Proxy.Configure(root.Proxy);
-
-            ServiceSections = root.ServiceSections;
-            if (root.UseSdkCache.HasValue)
-                UseSdkCache = root.UseSdkCache.Value;
-
-            EndpointDefinition = Choose(EndpointDefinition, root.EndpointDefinition);
-            Region = Choose(Region, root.Region);
-            ProfileName = Choose(ProfileName, root.ProfileName);
-            ProfilesLocation = Choose(ProfilesLocation, root.ProfilesLocation);
-            ApplicationName = Choose(ApplicationName, root.ApplicationName);
-            if (root.CorrectForClockSkew.HasValue)
-                CorrectForClockSkew = root.CorrectForClockSkew.Value;
-#endif
         }
 
         // If a is not null-or-empty, returns a; otherwise, returns b.
@@ -79,13 +61,8 @@ namespace Amazon.Util.Internal
             return (string.IsNullOrEmpty(a) ? b : a);
         }
 
-        IDictionary<string, XElement> ServiceSections { get; set; }
         public XElement GetServiceSection(string service)
         {
-            XElement section;
-            if (ServiceSections.TryGetValue(service, out section))
-                return section;
-
             return null;
         }
     }

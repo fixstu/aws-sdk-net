@@ -24,7 +24,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 
-using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using Amazon.Runtime.Internal.Util;
@@ -66,27 +65,18 @@ namespace Amazon
 
         public static string GetConfig(string name)
         {
-            NameValueCollection appConfig = ConfigurationManager.AppSettings;
-            if (appConfig == null)
-                return null;
-            string value = appConfig[name];
-            return value;
+            return null;
         }
 
         internal static T GetSection<T>(string sectionName)
             where T : class, new()
         {
-            object section = ConfigurationManager.GetSection(sectionName);
-            if (section == null)
-                return new T();
-            return section as T;
+            return new T();
         }
 
         internal static bool XmlSectionExists(string sectionName)
         {
-            var section = ConfigurationManager.GetSection(sectionName);
-            var element = section as System.Xml.XmlElement;
-            return (element != null);
+            return false;
         }
 
         #endregion
@@ -279,28 +269,22 @@ namespace Amazon
 
         private static bool IsConfigurationElement(PropertyInfo prop)
         {
-            return typeof(ConfigurationElement).IsAssignableFrom(prop.PropertyType);
+            return false;
         }
 
         private static bool IsConfigurationElementCollection(PropertyInfo prop)
         {
-            return typeof(ConfigurationElementCollection).IsAssignableFrom(prop.PropertyType);
+            return false;
         }
 
         private static Type TypeOfConfigurationCollectionItem(PropertyInfo prop)
         {
-            var configCollAttr = prop.PropertyType
-                .GetCustomAttributes(typeof(ConfigurationCollectionAttribute), false)
-                .First();
-            return ((ConfigurationCollectionAttribute)configCollAttr).ItemType;
+            return null;
         }
 
         private static string ConfigurationPropertyName(PropertyInfo prop)
         {
-            var configAttr = prop.GetCustomAttributes(typeof(ConfigurationPropertyAttribute), false)
-                .FirstOrDefault() as ConfigurationPropertyAttribute;
-
-            return null == configAttr ? prop.Name : configAttr.Name;
+            return prop.Name;
         }
 
         #endregion

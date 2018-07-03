@@ -15,7 +15,6 @@
 using Amazon.Runtime.Internal.Util;
 using System;
 using System.Collections.Specialized;
-using System.Configuration;
 
 namespace Amazon.Runtime
 {
@@ -38,22 +37,7 @@ namespace Amazon.Runtime
         /// </summary>
         public EnvironmentAWSCredentials()
         {
-            NameValueCollection appConfig = ConfigurationManager.AppSettings;
-
-            // Use hardcoded credentials
-            if (!string.IsNullOrEmpty(appConfig[ACCESSKEY]) && !string.IsNullOrEmpty(appConfig[SECRETKEY]))
-            {
-                var accessKey = appConfig[ACCESSKEY];
-                var secretKey = appConfig[SECRETKEY];
-                this._wrappedCredentials = new ImmutableCredentials(accessKey, secretKey, null);
-                var logger = Logger.GetLogger(typeof(EnvironmentAWSCredentials));
-                logger.InfoFormat("Credentials found with {0} and {1} app settings", ACCESSKEY, SECRETKEY);
-            }
-            // Fallback to the StoredProfileAWSCredentials provider
-            else
-            {
-                this._wrappedCredentials = new StoredProfileAWSCredentials().GetCredentials();
-            }
+            this._wrappedCredentials = new StoredProfileAWSCredentials().GetCredentials();
         }
 
         #endregion

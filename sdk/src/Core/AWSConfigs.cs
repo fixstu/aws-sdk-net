@@ -497,7 +497,7 @@ namespace Amazon
         {
             string value = GetConfig(name);
             bool result;
-            if (bool.TryParse(value, out result))
+            if ((!string.IsNullOrEmpty(value)) && bool.TryParse(value, out result))
                 return result;
             return defaultValue;
         }

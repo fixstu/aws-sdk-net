@@ -19,7 +19,6 @@ using Amazon.Runtime.Internal.Util;
 using Amazon.Util;
 using System;
 using System.Collections.Specialized;
-using System.Configuration;
 using System.Globalization;
 
 namespace Amazon.Runtime
@@ -39,26 +38,12 @@ namespace Amazon.Runtime
 
         public AppConfigAWSCredentials()
         {
-            NameValueCollection appConfig = ConfigurationManager.AppSettings;
             var logger = Logger.GetLogger(typeof(AppConfigAWSCredentials));
 
-            // Attempt hardcoded key credentials first, then look for an explicit profile name
-            // in either the SDK credential store or the shared credentials file. When using a profile
-            // name, if a location is not given the search will use the default locations and name for
-            // the credential file (assuming the profile is not found in the SDK store first)
-            if (!string.IsNullOrEmpty(appConfig[ACCESSKEY]) && !string.IsNullOrEmpty(appConfig[SECRETKEY]))
-            {
-                var accessKey = appConfig[ACCESSKEY];
-                var secretKey = appConfig[SECRETKEY];
-                this._wrappedCredentials = new BasicAWSCredentials(accessKey, secretKey);
-                logger.InfoFormat("Credentials found with {0} and {1} app settings", ACCESSKEY, SECRETKEY);
-            }
-            else if (!string.IsNullOrEmpty(AWSConfigs.AWSProfileName))
-            {
+            if (!string.IsNullOrEmpty(AWSConfigs.AWSProfileName)) {
                 CredentialProfileStoreChain chain = new CredentialProfileStoreChain(AWSConfigs.AWSProfilesLocation);
                 CredentialProfile profile;
-                if (chain.TryGetProfile(AWSConfigs.AWSProfileName, out profile))
-                {
+                if (chain.TryGetProfile(AWSConfigs.AWSProfileName, out profile)) {
                     // Will throw a descriptive exception if profile.CanCreateAWSCredentials is false.
                     _wrappedCredentials = profile.GetAWSCredentials(profile.CredentialProfileStore, true);
                 }

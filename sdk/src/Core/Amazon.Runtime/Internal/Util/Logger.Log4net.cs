@@ -151,10 +151,9 @@ namespace Amazon.Runtime.Internal.Util
                 loadStatics();
             }
 
-            if (logMangerType == null)
-                return;
-
-            this.internalLogger = getLoggerWithTypeMethod.Invoke(null, new object[] { TypeFactory.GetTypeInfo(declaringType).Assembly, declaringType }); //Assembly.GetCallingAssembly()
+            if (loadState == LoadState.Success) {
+                this.internalLogger = getLoggerWithTypeMethod.Invoke(null, new object[] { TypeFactory.GetTypeInfo(declaringType).Assembly, declaringType }); //Assembly.GetCallingAssembly()
+            }
         }
 
         #region Overrides
